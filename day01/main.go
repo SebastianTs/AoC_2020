@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -21,6 +22,7 @@ func main() {
 }
 
 func findSum(ns []int, sum int) (result int, err error) {
+	sort.Ints(ns)
 	for i, first := range ns {
 		if first <= sum {
 			for _, second := range ns[i:] {
@@ -31,10 +33,11 @@ func findSum(ns []int, sum int) (result int, err error) {
 			}
 		}
 	}
-	return 0, errors.New("No Result found")
+	return 0, errors.New("No result found")
 }
 
 func findSumPart2(ns []int, sum int) (result int, err error) {
+	sort.Ints(ns)
 	for i, first := range ns {
 		if first <= sum {
 			for j, second := range ns[i:] {
@@ -47,7 +50,7 @@ func findSumPart2(ns []int, sum int) (result int, err error) {
 			}
 		}
 	}
-	return 0, errors.New("No Result found")
+	return 0, errors.New("No result found")
 }
 
 func readInput(filename string) (ns []int, err error) {

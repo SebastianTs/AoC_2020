@@ -20,7 +20,7 @@ func Test_findSum(t *testing.T) {
 		want result
 	}{
 		{"example1", args{[]int{1721, 979, 366, 299, 675, 1456}, 2020}, result{514579, nil}},
-		{"example2", args{[]int{}, 2020}, result{0, errors.New("No Result found")}},
+		{"example2", args{[]int{}, 2020}, result{0, errors.New("No result found")}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
