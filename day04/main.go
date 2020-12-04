@@ -111,10 +111,21 @@ func isValid(p pass) (bool, error) {
 	}
 	//ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
 	ecl := p.content["ecl"]
-	validEyeColors := map[string]bool{"amb": true, "blu": true, "brn": true, "gry": true, "grn": true, "hzl": true, "oth": true}
+	validEyeColors := map[string]struct{}{"amb": {}, "blu": {}, "brn": {}, "gry": {}, "grn": {}, "hzl": {}, "oth": {}}
 	if _, ok := validEyeColors[ecl]; !ok {
 		return false, nil
 	}
+	/*
+		match, err = regexp.MatchString("^(amb|blu|brn|gry|grn|hzl|oth){1}$", ecl)
+		if err != nil {
+			return false, err
+		}
+		if !match {
+			return false, nil
+		}
+		return true, nil
+	*/
+
 	//pid (Passport ID) - a nine-digit number, including leading zeroes.
 	pid := p.content["pid"]
 	match, err = regexp.MatchString("^[0-9]{9}$", pid)
