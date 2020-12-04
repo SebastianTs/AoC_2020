@@ -73,8 +73,8 @@ func isValidRegex(p pass) (bool, error) {
 		"byr": "^(19[2-9][0-9]|200[0-2])$",
 		"iyr": "^20(1[0-9]|20)$",
 		"eyr": "^20(2[0-9]|30)$",
-		"hgt": "^(1[5-8][0-9]cm|19[0-3]cm|59in|6[0-9]in|7[0-6]in)",
-		"hcl": "^#[0-9a-f]{6}",
+		"hgt": "^(1[5-8][0-9]cm|19[0-3]cm|59in|6[0-9]in|7[0-6]in)$",
+		"hcl": "^#[0-9a-f]{6}$",
 		"ecl": "^(amb|blu|brn|gry|grn|hzl|oth){1}$",
 		"pid": "^[0-9]{9}$",
 	}
@@ -150,16 +150,6 @@ func isValid(p pass) (bool, error) {
 	if _, ok := validEyeColors[ecl]; !ok {
 		return false, nil
 	}
-	/*
-		match, err = regexp.MatchString("^(amb|blu|brn|gry|grn|hzl|oth){1}$", ecl)
-		if err != nil {
-			return false, err
-		}
-		if !match {
-			return false, nil
-		}
-		return true, nil
-	*/
 	//pid (Passport ID) - a nine-digit number, including leading zeroes.
 	pid := p.content["pid"]
 	match, err = regexp.MatchString("^[0-9]{9}$", pid)
