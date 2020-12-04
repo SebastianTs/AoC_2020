@@ -60,7 +60,7 @@ func isPresentAndValidRegex(p pass) bool {
 	if !isPresent(p) {
 		return false
 	}
-	result, err := isValid(p)
+	result, err := isValidRegex(p)
 	if err != nil {
 		fmt.Printf("error: %v %v\n", err, p.content)
 	}
@@ -160,7 +160,6 @@ func isValid(p pass) (bool, error) {
 		}
 		return true, nil
 	*/
-
 	//pid (Passport ID) - a nine-digit number, including leading zeroes.
 	pid := p.content["pid"]
 	match, err = regexp.MatchString("^[0-9]{9}$", pid)
