@@ -22,6 +22,7 @@ func main() {
 	}
 	fmt.Println(validatePassList(passes, isPresent))
 	fmt.Println(validatePassList(passes, isPresentAndValid))
+	fmt.Println(validatePassList(passes, isPresentAndValidRegex))
 }
 
 func validatePassList(passes []pass, fn validateFn) (count int) {
@@ -53,6 +54,40 @@ func isPresentAndValid(p pass) bool {
 	}
 	return result
 
+}
+
+func isPresentAndValidRegex(p pass) bool {
+	if !isPresent(p) {
+		return false
+	}
+	result, err := isValid(p)
+	if err != nil {
+		fmt.Printf("error: %v %v\n", err, p.content)
+	}
+	return result
+
+}
+
+func isValidRegex(p pass) (bool, error) {
+	validFieldRegex := map[string]string{
+		"byr": "^(19[2-9][0-9]|200[0-2])$",
+		"iyr": "^20(1[0-9]|20)$",
+		"eyr": "^20(2[0-9]|30)$",
+		"hgt": "^(1[5-8][0-9]cm|19[0-3]cm|59in|6[0-9]in|7[0-6]in)",
+		"hcl": "^#[0-9a-f]{6}",
+		"ecl": "^(amb|blu|brn|gry|grn|hzl|oth){1}$",
+		"pid": "^[0-9]{9}$",
+	}
+	for k, v := range p.content {
+		match, err := regexp.MatchString(validFieldRegex[k], v)
+		if err != nil {
+			return false, err
+		}
+		if !match {
+			return false, nil
+		}
+	}
+	return true, nil
 }
 
 func isValid(p pass) (bool, error) {
