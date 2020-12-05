@@ -47,24 +47,24 @@ func findMySeatID(list []string) int {
 }
 
 func calculateID(pass string) (id int) {
-	row0 := 0
-	row1 := 127
-	col0 := 0
-	col1 := 7
+	rowIndexLow := 0
+	rowIndexHigh := 127
+	colIndexLow := 0
+	colIndexHigh := 7
 
 	for _, c := range pass {
 		switch c {
 		case 'F':
-			row1 = row0 + (row1-row0)/2
+			rowIndexHigh = rowIndexLow + (rowIndexHigh-rowIndexLow)/2
 		case 'B':
-			row0 = row0 + (row1-row0)/2 + 1
+			rowIndexLow = rowIndexLow + (rowIndexHigh-rowIndexLow)/2 + 1
 		case 'L':
-			col1 = col0 + (col1-col0)/2
+			colIndexHigh = colIndexLow + (colIndexHigh-colIndexLow)/2
 		case 'R':
-			col0 = col0 + (col1-col0)/2 + 1
+			colIndexLow = colIndexLow + (colIndexHigh-colIndexLow)/2 + 1
 		}
 	}
-	id = row0*8 + col0
+	id = rowIndexLow*8 + colIndexLow
 	return id
 }
 
