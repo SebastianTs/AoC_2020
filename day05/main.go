@@ -46,6 +46,7 @@ func findMySeatID(list []string) int {
 	return 0
 }
 
+/*
 func calculateID(pass string) (id int) {
 	rowIndexLow := 0
 	rowIndexHigh := 127
@@ -66,6 +67,27 @@ func calculateID(pass string) (id int) {
 	}
 	id = rowIndexLow*8 + colIndexLow
 	return id
+}
+*/
+
+func calculateID(pass string) (id int) {
+	r := 1
+	row := 0
+	for i := 6; i >= 0; i-- {
+		if pass[i] == 'B' {
+			row += r
+		}
+		r *= 2
+	}
+	c := 1
+	col := 0
+	for i := 9; i >= 7; i-- {
+		if pass[i] == 'R' {
+			col += c
+		}
+		c *= 2
+	}
+	return row*8 + col
 }
 
 func readInput(filename string) (ns []string, err error) {
