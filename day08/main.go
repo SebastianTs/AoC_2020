@@ -19,6 +19,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(process(ops))
+	fmt.Println(processPart2(ops))
 }
 
 func process(ops []op) (acc int) {
@@ -36,6 +37,38 @@ func process(ops []op) (acc int) {
 		}
 	}
 	return
+}
+
+func processPart2(ops []op) (acc int) {
+	original := make([]op, len(ops))
+	copy(original, ops)
+	for j, cur := range ops {
+		switch cur.ins {
+		case "jmp":
+			ops[j].ins = "nop"
+		case "nop":
+			ops[j].ins = "jmp"
+		}
+		seen := make([]bool, len(ops))
+		acc = 0
+		for i := 0; !seen[i]; {
+			seen[i] = true
+			switch ops[i].ins {
+			case "nop":
+				i++
+			case "jmp":
+				i += ops[i].arg
+			case "acc":
+				acc += ops[i].arg
+				i++
+			}
+			if i == len(ops) {
+				return
+			}
+		}
+		copy(ops, original)
+	}
+	return 0
 }
 
 func readInput(filename string) (ops []op, err error) {
