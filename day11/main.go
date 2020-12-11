@@ -12,23 +12,31 @@ type mark struct {
 	r rune
 }
 
+type rules struct {
+	nOccupied int
+	nLeave    int
+}
+
+type adjFn func([][]rune, int, int) int
+
 func main() {
 	area, err := readInput("./input")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(count(area))
+
+	fmt.Println(count(area, adjOccupied, rules{nOccupied: 0, nLeave: 3}))
 	area, err = readInput("./input")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(countDirection(area))
+	fmt.Println(count(area, adjOccupiedDirection, rules{nOccupied: 0, nLeave: 4}))
 }
 
-func count(area [][]rune) (count int) {
+func count(area [][]rune, fnAdj adjFn, r rules) (count int) {
 	ready := false
 	for !ready {
-		ready = !arrive(area)
+		ready = !arrive(area, fnAdj, r)
 	}
 	for _, seats := range area {
 		for _, pos := range seats {
@@ -40,52 +48,16 @@ func count(area [][]rune) (count int) {
 	return
 }
 
-func countDirection(area [][]rune) (count int) {
-	ready := false
-	for !ready {
-		ready = !arriveDirection(area)
-	}
-	for _, seats := range area {
-		for _, pos := range seats {
-			if pos == '#' {
-				count++
-			}
-		}
-	}
-	return
-}
-
-func arrive(area [][]rune) (changed bool) {
+func arrive(area [][]rune, fn adjFn, r rules) (changed bool) {
 	marks := make(map[mark]struct{}, 0)
 	for i, seats := range area {
 		for j, pos := range seats {
-			n := adjOccupied(area, i, j)
-			if pos == 'L' && n == 0 {
+			n := fn(area, i, j)
+			if pos == 'L' && n == r.nOccupied {
 				marks[mark{j, i, '#'}] = struct{}{}
 				changed = true
 			}
-			if pos == '#' && n > 3 {
-				marks[mark{j, i, 'L'}] = struct{}{}
-				changed = true
-			}
-		}
-	}
-	for m := range marks {
-		area[m.y][m.x] = m.r
-	}
-	return changed
-}
-
-func arriveDirection(area [][]rune) (changed bool) {
-	marks := make(map[mark]struct{}, 0)
-	for i, seats := range area {
-		for j, pos := range seats {
-			n := adjOccupiedDirection(area, i, j)
-			if pos == 'L' && n == 0 {
-				marks[mark{j, i, '#'}] = struct{}{}
-				changed = true
-			}
-			if pos == '#' && n > 4 {
+			if pos == '#' && n > r.nLeave {
 				marks[mark{j, i, 'L'}] = struct{}{}
 				changed = true
 			}
@@ -101,8 +73,7 @@ func adjOccupied(area [][]rune, y int, x int) (count int) {
 	if x > 0 && y > 0 && y < len(area)-1 && x < len(area[0])-1 {
 		for _, i := range []int{-1, 0, 1} {
 			for _, j := range []int{-1, 0, 1} {
-				if i == 0 && j == 0 {
-				} else {
+				if !(i == 0 && j == 0) {
 					if area[y+i][x+j] == '#' {
 						count++
 					}
@@ -118,22 +89,22 @@ func adjOccupiedDirection(area [][]rune, y int, x int) (count int) {
 	if x > 0 && y > 0 && y < len(area)-1 && x < len(area[0])-1 {
 		for _, i := range []int{-1, 0, 1} {
 			for _, j := range []int{-1, 0, 1} {
-				if i == 0 && j == 0 {
-				} else {
-					for d := 1; ; d++ {
+				if !(i == 0 && j == 0) {
+					done := false
+					for d := 1; !done; d++ {
 						dy := y + i*d
 						dx := x + j*d
 						if area[dy][dx] == '#' {
 							count++
-							break
+							done = true
 						}
 						if area[dy][dx] == 'L' {
-							break
+							done = true
 						}
 						if dx == 0 || dy == 0 ||
 							dy == len(area)-1 ||
 							dx == len(area[0])-1 {
-							break
+							done = true
 						}
 					}
 				}
