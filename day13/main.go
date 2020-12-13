@@ -11,6 +11,7 @@ import (
 type notes struct {
 	earliestDepartTime int
 	buses              []int
+	idx                []int
 }
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(calculateErliestBus(notes))
+	fmt.Println(busContest(notes))
 
 }
 
@@ -34,8 +36,20 @@ func calculateErliestBus(n notes) int {
 	return 0
 }
 
+func busContest(n notes) int {
+
+	var jump = n.buses[0]
+	var i = jump
+	for j, bus := range n.buses[1:] {
+		for (i+n.idx[j+1])%bus != 0 {
+			i += jump
+		}
+		jump *= bus
+	}
+	return i
+}
+
 func readInput(filename string) (n notes, err error) {
-	n.buses = make([]int, 0)
 	f, err := os.Open(filename)
 	defer f.Close()
 	if err != nil {
@@ -52,16 +66,17 @@ func readInput(filename string) (n notes, err error) {
 			}
 		} else {
 			splits := strings.Split(line, ",")
-			for _, split := range splits {
+			for i, split := range splits {
 				if split == "x" {
-					//TBD Part2
-				} else {
-					cur, err := strconv.Atoi(split)
-					if err != nil {
-						return n, err
-					}
-					n.buses = append(n.buses, cur)
+					continue
 				}
+				cur, err := strconv.Atoi(split)
+				if err != nil {
+					return n, err
+				}
+				n.buses = append(n.buses, cur)
+				n.idx = append(n.idx, i)
+
 			}
 		}
 		i++
