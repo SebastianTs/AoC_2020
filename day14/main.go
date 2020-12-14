@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	ins, err := readInput("./test-input")
+	ins, err := readInput("./input")
 	if err != nil {
 		panic(err)
 	}
@@ -25,23 +25,20 @@ func run(ins []instruction) (sum int) {
 		for i, s := range in.mask {
 			if s == '1' {
 				val1 += int(math.Pow(2, float64(len(in.mask)-i-1)))
-			} else if s == 'X' {
-				val2 += int(math.Pow(2, float64(len(in.mask)-i-1)))
 			} else if s == '0' {
 				val3 += int(math.Pow(2, float64(len(in.mask)-i-1)))
 			}
+			val2 += int(math.Pow(2, float64(len(in.mask)-i-1)))
 		}
+		valmask := val2 ^ val3
 		for _, m := range in.mem {
-			m[1] = (m[1] & val2) | val1
-			m[1] = m[1] | (val2 ^ val3)
+			m[1] = m[1] & valmask
+			m[1] = m[1] | val1
 			memory[m[0]] = m[1]
 		}
 	}
-	for i, v := range memory {
+	for _, v := range memory {
 		sum += v
-		if v != 0 {
-			fmt.Println(i, v)
-		}
 	}
 	return
 }
