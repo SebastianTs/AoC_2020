@@ -62,9 +62,8 @@ func runVersion2(ins []instruction) (sum int) {
 			val2 += int(math.Pow(2, float64(len(in.mask)-i-1)))
 		}
 		valmask := val2 ^ val3
-		for i := 0; i < 36; i++ {
-			cur := int(math.Pow(2, float64(i))) | valx
-			fmt.Printf("cur %b\n int %b\nvalx %b\n", cur, int(math.Pow(2, float64(i))), valx)
+		for i := 0; i < int(math.Pow(2, float64(37)))-1; i++ {
+			cur := i | valx
 			for _, m := range in.mem {
 				m[1] = m[1] & valmask
 				m[1] = m[1] | val1
